@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="Combobox Component" />
+    <meta name="author" content="ツキノリュウ" />
+    <title>Combobox Component</title>
+    <link href="css/bootstrap-reboot.min.css" rel="stylesheet" />
+    <link href="css/main.css" rel="stylesheet" />
+</head>
+
+<body>
+    <section class="content-wrap">
+        <h1 class="content-wrap__title">Combobox Component</h1>
+        <div class="combobox" role="combobox">
+            <div class="combobox__selector">
+                <span class="combobox__selector__option" v-for="(item, index) in selectedOption" :key="index"
+                    @click.self="REMOVE_OPTIONS(item)">
+                    <img :src="item.picture.thumbnail" alt="item.name.first">
+                    {{item.name.first}}
+                    <span class="combobox__selector__option__close"><i class="fas fa-times"></i></span>
+                </span>
+                <input class="combobox__selector__input" type="search" placeholder="Please type the keywords..."
+                    v-model="keyword" @input="SEARCH_ITEM" @focus="SEARCH_ITEM" @blur="RESET"
+                    :disabled="selectedOption.length === totalData.length" />
+                <span class="combobox__selector__arrow" :class="{'combobox__selector__arrow__icon':!resultWindow}"><i
+                        class="fas fa-caret-up"></i></span>
+            </div>
+            <transition name="slideDown" mode="out-in" appear>
+                <result-box :data="tempSearchResult" v-if="resultWindow"
+                    @options="GET_OPTIONS($event,$event.login.uuid)" />
+            </transition>
+        </div>
+    </section>
+
+    <!-- Vue -->
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <!-- axios -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <!-- Font Awesome -->
+    <script src="js/solid.min.js"></script>
+    <script src="js/fontawesome.min.js"></script>
+    <script>
+        const resultBox = {
+            template: `
+        <div class="combobox__result">
+            <div class="combobox__result__item combobox__result__item--center" v-if="data.length === 0">No match data.</div>
+            <div class="combobox__result__item" v-for="item in data" :key="item.id" @click="PASS_SELECTED(item)" v-else>
+                <img class="combobox__result__item__cover" :src="item.picture.thumbnail" alt="item.name.first">
+                <span class="combobox__result__item__tag text-blue" v-if="item.gender === 'male'"><i class="fas fa-mars"></i></span>
+                <span class="combobox__result__item__tag text-pink" v-else><i class="fas fa-venus"></i></span>
+                {{item.name.first}} {{item.name.last}}
+            </div>
+        </div>`,
+            props: ['data'],
+            methods: {
+                PASS_SELECTED(item) {
+                    this.$emit('options', item);
+                }
+            },
+        }
+
+        const combobox = new Vue({
+            el: '.combobox',
+            components: {
+                'result-box': resultBox
+            },
+            data() {
+                return {
+                    totalData: [],
+                    resultWindow: false,
+                    saving: false,
+                    selectedOption: [],
+                    tempSearchResult: [],
+                    keyword: '',
+                }
+            },
+            methods: {
+                DEMO_DATA() {
+                    const api = 'https://randomuser.me/api/?results=25', // for data demo, use random user generator API
+                        vm = this;
+                    axios.get(api).then(response => {
+                        vm.totalData = response.data.results;
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
+                },
+                RESET() {
+                    setTimeout(() => {
+                        if (!this.saving) {
+                            this.keyword = '';
+                            this.resultWindow = false;
+                            this.tempSearchResult = [];
+                        }
+                    }, 150);
+                },
+                GET_OPTIONS($event, id) {
+                    const DB = this.selectedOption;
+                    // start data saving
+                    this.saving = true;
+                    // check exist data
+                    if (DB.find(item => item.login.uuid === id)) {
+                        alert('Already selected.');
+                    } else {
+                        this.selectedOption.push($event);
+                    }
+                    // end data saving
+                    this.saving = false;
+                },
+                REMOVE_OPTIONS(item) {
+                    const DB = this.selectedOption;
+                    DB.splice(DB.indexOf(item), 1);
+                },
+                SEARCH_ITEM() {
+                    let keywords = this.keyword.toLowerCase().trim(),
+                        searchResult = this.totalData.filter(item => {
+                            return item.name.first.toLowerCase().includes(keywords) || item.name.last.toLowerCase().includes(keywords);
+                        });
+                    // show result
+                    this.resultWindow = true;
+                    // start serching
+                    if (this.keyword === "") {
+                        this.tempSearchResult = this.totalData;
+                    } else {
+                        this.tempSearchResult = searchResult;
+                    }
+                }
+            },
+            created() {
+                this.DEMO_DATA();
+            }
+        });
+    </script>
+</body>
+
+</html>
