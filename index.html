@@ -19,7 +19,7 @@
                 <span class="combobox__selector__option" v-for="(item, index) in selectedOption" :key="index">
                     <img :src="item.picture.thumbnail" alt="item.name.first">
                     {{item.name.first}}
-                    <span class="combobox__selector__option__close"  @click="REMOVE_OPTIONS(item)"><i class="fas fa-times"></i></span>
+                    <span class="combobox__selector__option__close"  @click.self="REMOVE_OPTIONS(item)"><i class="fas fa-times"></i></span>
                 </span>
                 <input class="combobox__selector__input" type="search" placeholder="Please type the keywords..."
                     v-model="keyword" @input="SEARCH_ITEM" @focus="SEARCH_ITEM" @blur="RESET"
