@@ -17,7 +17,7 @@
         <div class="combobox" role="combobox">
             <div class="combobox__selector">
                 <span class="combobox__selector__option" v-for="(item, index) in selectedOption" :key="index"
-                    @click.self="REMOVE_OPTIONS(item)">
+                    @click="REMOVE_OPTIONS(item)">
                     <img :src="item.picture.thumbnail" alt="item.name.first">
                     {{item.name.first}}
                     <span class="combobox__selector__option__close"><i class="fas fa-times"></i></span>
