@@ -8,6 +8,7 @@
     <meta name="author" content="ツキノリュウ" />
     <title>Combobox Component</title>
     <link href="css/bootstrap-reboot.min.css" rel="stylesheet" />
+    <link href='https://css.gg/spinner-alt.css' rel='stylesheet'>
     <link href="css/main.css" rel="stylesheet" />
 </head>
 
@@ -15,6 +16,9 @@
     <section class="content-wrap">
         <h1 class="content-wrap__title">Combobox Component</h1>
         <div class="combobox" role="combobox">
+            <div class="loading" v-if="isLoading">
+                <i class="gg-spinner-alt"></i>
+            </div>
             <div class="combobox__selector">
                 <span class="combobox__selector__option" v-for="(item, index) in selectedOption" :key="index">
                     <img :src="item.picture.thumbnail" alt="item.name.first">
@@ -69,6 +73,7 @@
             },
             data() {
                 return {
+                    isLoading: false,
                     totalData: [],
                     resultWindow: false,
                     saving: false,
@@ -81,10 +86,13 @@
                 demoData() {
                     const api = 'https://randomuser.me/api/?results=25', // for data demo, use random user generator API
                         vm = this;
+                    vm.isLoading = true;
                     axios.get(api).then(response => {
                         vm.totalData = response.data.results;
-                    }).catch(function (error) {
+                        vm.isLoading = false;
+                    }).catch(error => {
                         console.log(error);
+                        alert('Somthing go wrong, please retry later.');
                     });
                 },
                 reset() {
