@@ -89,7 +89,9 @@
                     vm.isLoading = true;
                     axios.get(api).then(response => {
                         vm.totalData = response.data.results;
-                        vm.isLoading = false;
+                        vm.$nextTick(() => {
+                            vm.isLoading = false;
+                        });
                     }).catch(error => {
                         console.log(error);
                         alert('Somthing go wrong, please retry later.');
