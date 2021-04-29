@@ -21,7 +21,7 @@
             </div>
             <div class="combobox__selector">
                 <span class="combobox__selector__option" v-for="(item, index) in selectedOption" :key="index">
-                    <img :src="item.picture.thumbnail" alt="item.name.first">
+                    <img :src="item.picture.thumbnail" :alt="item.name.first">
                     {{item.name.first}}
                     <span class="combobox__selector__option__close" @click="removeOptions(item)"><i
                             class="fas fa-times"></i></span>
@@ -52,7 +52,7 @@
         <div class="combobox__result">
             <div class="combobox__result__item combobox__result__item--center" v-if="data.length === 0">No match data.</div>
             <div class="combobox__result__item" v-for="item in data" :key="item.id" @click="callSelected(item)" v-else>
-                <img class="combobox__result__item__cover" :src="item.picture.thumbnail" alt="item.name.first">
+                <img class="combobox__result__item__cover" :src="item.picture.thumbnail" :alt="item.name.first">
                 <span class="combobox__result__item__tag text-blue" v-if="item.gender === 'male'"><i class="fas fa-mars"></i></span>
                 <span class="combobox__result__item__tag text-pink" v-else><i class="fas fa-venus"></i></span>
                 {{item.name.first}} {{item.name.last}}
